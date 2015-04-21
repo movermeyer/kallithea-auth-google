@@ -101,11 +101,13 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         user_info = response.json()
         user_info['username'] = user_info['email'].replace('@', '_at_')
         pylons.session[self.session_key] = user_info
+        log.debug('user info stored in session: %s', user_info)
 
-    def _get_username(self, environ, settings):
+    def _get_user_info(self, environ, settings):
+        """Get user info."""
         user_info = pylons.session.get(self.session_key)
         if user_info:
-            return user_info['email']
+            return user_info
         oauth = OAuth2Session(
             settings['client_id'],
             redirect_uri=pylons.url('oauth2callback', qualified=True),
@@ -130,9 +132,16 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
     def get_user(self, username=None, settings=None, **kwargs):
         """Get user given the context."""
         environ = kwargs.get('environ') or {}
-        username = self._get_username(environ, settings)
+        user_info = self._get_user_info(environ, settings)
+        username = user_info['username']
+        email = user_info['email']
         # we got the username, so use default method now
-        return super(KallitheaAuthPlugin, self).get_user(username)
+        user = super(KallitheaAuthPlugin, self).get_user(username)
+        if user is None:
+            user = User.get_by_email(email)
+            # username might differ, but email not
+            user.username = username
+        return user
 
     def auth(self, userobj, username, password, settings, **kwargs):
         """Authenticate request."""
@@ -147,13 +156,16 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         # we don't care passed username/password for container auth plugins.
         # only way to log in is using environ
         username = None
+        identity = {}
         if userobj:
             username = getattr(userobj, 'username')
 
         if not username:
             # we don't have any objects in DB user doesn't exist extrac username
             # from environ based on the settings
-            username = self._get_username(environ, settings)
+            identity = self._get_user_info(environ, settings)
+            if identity:
+                username = identity['username']
 
         # if cannot fetch username, it's a no-go for this plugin to proceed
         if not username:
