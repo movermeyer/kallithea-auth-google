@@ -63,6 +63,14 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
                 "default": "client-secret",
                 "formname": "Client secret"
             },
+            {
+                "name": "hd",
+                "validator": self.validators.UnicodeString(strip=True, not_empty=False),
+                "type": "string",
+                "description": "Google apps domain to limit authentication to.",
+                "default": None,
+                "formname": "Google apps domain"
+            },
         ]
         return settings
 
@@ -101,11 +109,16 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
             redirect_uri=pylons.url('oauth2callback', qualified=True),
             state=pylons.request.GET.get('came_from'),
             scope=self.scope)
+        kwargs = {}
+        if settings['hd']:
+            kwargs['hd'] = settings['hd']
         authorization_url, state = oauth.authorization_url(
             'https://accounts.google.com/o/oauth2/auth',
             # access_type and approval_prompt are Google specific extra
             # parameters.
-            access_type="offline", approval_prompt="force")
+            access_type="offline",
+            approval_prompt="force",
+            **kwargs)
         redirect(authorization_url)
 
         log.debug('extracted %s', (authorization_url, state))

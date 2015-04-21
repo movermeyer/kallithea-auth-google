@@ -4,7 +4,6 @@ env:
   matrix:
   - TESTENV=py26
   - TESTENV=py27
-  - TESTENV=py34
   - TESTENV=coveralls
 install:
 - pip install tox
