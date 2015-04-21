@@ -83,8 +83,8 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         def_user_perms = User.get_default_user().AuthUser.permissions['global']
         return 'hg.extern_activate.auto' in def_user_perms
 
-    def store_username(self, code):
-        """Store username given the authentication code."""
+    def store_user_info(self, code):
+        """Store user info given the authentication code."""
         settings = self.get_settings()
         # compensation for broken oauthlib
         os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
@@ -98,12 +98,14 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
             client_secret=settings['client_secret'],
             code=code)
         response = oauth.get('https://www.googleapis.com/oauth2/v1/userinfo')
-        pylons.session[self.session_key] = response.json()['email']
+        user_info = response.json()
+        user_info['username'] = user_info['email'].replace('@', '_at_')
+        pylons.session[self.session_key] = user_info
 
     def _get_username(self, environ, settings):
-        username = pylons.session.get(self.session_key)
-        if username:
-            return username
+        user_info = pylons.session.get(self.session_key)
+        if user_info:
+            return user_info['email']
         oauth = OAuth2Session(
             settings['client_id'],
             redirect_uri=pylons.url('oauth2callback', qualified=True),
@@ -157,13 +159,13 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         if not username:
             return None
 
-        identity = environ.get('repoze.who.identity')
+        identity = pylons.session.get(self.session_key)
         admin = getattr(userobj, 'admin', False)
         active = getattr(userobj, 'active', True)
         if identity:
-            email = identity.get(settings.get('email_attr'), getattr(userobj, 'email', ''))
-            firstname = identity.get(settings.get('firstname_attr'), getattr(userobj, 'firstname', ''))
-            lastname = identity.get(settings.get('lastname_attr'), getattr(userobj, 'lastname', ''))
+            email = identity.get('email', getattr(userobj, 'email', ''))
+            firstname = identity.get('given_name', getattr(userobj, 'firstname', ''))
+            lastname = identity.get('family_name', getattr(userobj, 'lastname', ''))
         else:
             email = getattr(userobj, 'email', '')
             firstname = getattr(userobj, 'firstname', '')

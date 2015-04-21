@@ -21,6 +21,6 @@ class GoogleAuthController(BaseController):
         state = request.GET.get('state')
         code = request.GET.get('code')
         plugin = KallitheaAuthPlugin()
-        plugin.store_username(code=code)
+        plugin.store_user_info(code=code)
         h.flash(_('Successfully authenticated'), 'success')
         redirect(state)

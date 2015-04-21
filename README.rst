@@ -34,10 +34,19 @@ In your config (``my.ini``):
     [filter:google-auth]
     use = egg:kallithea-auth-google#google-auth
 
-    [app:main]
-    use = egg:Kallithea
-    ## enable google auth middleware
-    filter-with = google-auth
+    [pipeline:main]
+    pipeline =
+        google-auth
+        kallithea
+
+    [app:kallithea]
+    use = egg:Kallithea#main
+
+Note that after this change, for ``paster setup-db`` you'll need to pass the section name explicitly:
+
+::
+
+    paster setup-db my.ini#kallithea
 
 Contact
 -------
