@@ -12,3 +12,5 @@ script: tox -e $TESTENV
 notifications:
   email:
   - opensource-tests@paylogic.com
+  slack:
+    secure: CXfMTg1lZzKuvJZ3ZUkTriWaM9YjujGutPFFmGN5zJGzkgewMD8DgrpMm32MqaVYHdfCn4sM3r1GAqtBJqU9PcStoJbNAMQsuR7QEcOR0Uhou/tBsRTVAfaeLjOlBG1MVVhhSWr89SvGQetN+Fv4kKECaBfkAdnD0hFmg/XgyxE=
