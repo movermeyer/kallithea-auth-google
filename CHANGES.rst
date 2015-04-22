@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0.3
+-----
+
+* Tolerance for existing usernames/emails (bubenkoff)
+
+
 1.0.2
 -----
 

@@ -140,7 +140,8 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         if user is None:
             user = User.get_by_email(email)
             # username might differ, but email not
-            user.username = username
+            if user is not None:
+                user.username = username
         return user
 
     def auth(self, userobj, username, password, settings, **kwargs):
