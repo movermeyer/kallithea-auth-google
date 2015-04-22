@@ -138,12 +138,12 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
         # we got the username, so use default method now
         user = super(KallitheaAuthPlugin, self).get_user(username)
         if user is None:
-            user = User.get_by_email(email)
             # username might differ, but email not
-            if user is not None:
-                user.username = username
-                user.extern_type = self.name
-                user.extern_name = username
+            user = User.get_by_email(email)
+        if user is not None:
+            user.username = username
+            user.extern_type = self.name
+            user.extern_name = username
         return user
 
     def auth(self, userobj, username, password, settings, **kwargs):
