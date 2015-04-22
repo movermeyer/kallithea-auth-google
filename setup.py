@@ -22,7 +22,7 @@ setup(
     license="MIT license",
     author_email="developers@paylogic.com",
     url="https://github.com/paylogic/kallithea-google-auth",
-    version="1.0.4",
+    version="1.0.5",
     packages=find_packages(include="kallithea_auth_google*"),
     install_requires=install_requires,
     entry_points="""
