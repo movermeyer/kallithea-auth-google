@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.3
+1.0.4
 -----
 
 * Tolerance for existing usernames/emails (bubenkoff)

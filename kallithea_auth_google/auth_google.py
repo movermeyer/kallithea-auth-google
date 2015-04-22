@@ -174,7 +174,7 @@ class KallitheaAuthPlugin(auth_modules.KallitheaExternalAuthPlugin):
 
         identity = pylons.session.get(self.session_key)
         admin = getattr(userobj, 'admin', False)
-        active = getattr(userobj, 'active', True)
+        active = getattr(userobj, 'active', self.user_activation_state())
         if identity:
             email = identity.get('email', getattr(userobj, 'email', ''))
             firstname = identity.get('given_name', getattr(userobj, 'firstname', ''))
