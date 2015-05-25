@@ -30,23 +30,25 @@ In your config (``my.ini``):
 
 ::
 
-    ## google auth middleware
-    [filter:google-auth]
-    use = egg:kallithea-auth-google#google-auth
-
     [pipeline:main]
     pipeline =
         google-auth
         kallithea
 
-    [app:kallithea]
-    use = egg:Kallithea#main
+    ## google auth middleware
+    [filter:google-auth]
+    use = egg:kallithea-auth-google#google-auth
 
-Note that after this change, for ``paster setup-db`` you'll need to pass the section name explicitly:
+    [app:kallithea]
+    use = egg:kallithea#main
+    ## enable google auth middleware
+    filter-with = google-auth
+
+Note that after this change, for all kallithea paster commands you'll need to pass the section name explicitly:
 
 ::
 
-    paster setup-db my.ini#kallithea
+    paster <command> my.ini --name=kallithea [options]
 
 Contact
 -------
