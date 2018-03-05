@@ -6,7 +6,7 @@ Google auth plugin for Kallithea source code management system.
 .. image:: https://api.travis-ci.org/paylogic/kallithea-auth-google.png
    :target: https://travis-ci.org/paylogic/kallithea-auth-google
 
-.. image:: https://pypip.in/v/kallithea-auth-google/badge.png
+.. image:: https://img.shields.io/pypi/v/kallithea-auth-google.svg
    :target: https://crate.io/packages/kallithea-auth-google/
 
 .. image:: https://coveralls.io/repos/paylogic/kallithea-auth-google/badge.png?branch=master
